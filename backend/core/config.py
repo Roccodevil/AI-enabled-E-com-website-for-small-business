@@ -26,6 +26,20 @@ def _normalize_database_url(raw_url: str) -> str:
     return url
 
 
+def _normalize_origin(origin: str) -> str:
+    cleaned = origin.strip().strip('"').strip("'")
+    return cleaned.rstrip("/")
+
+
+def _parse_cors_origins(raw: str) -> list[str]:
+    origins: list[str] = []
+    for part in raw.split(","):
+        normalized = _normalize_origin(part)
+        if normalized:
+            origins.append(normalized)
+    return origins
+
+
 class Settings:
     app_env: str = os.getenv("APP_ENV", "development")
     database_url: str = _normalize_database_url(
@@ -60,15 +74,16 @@ class Settings:
     groq_api_key: str = os.getenv("GROQ_API_KEY", "")
     groq_model: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
     pricing_model_path: str = os.getenv("PRICING_MODEL_PATH", "./ml_engine/pricing_model.pkl")
-    cors_allow_origins: list[str] = [
-        origin.strip()
-        for origin in os.getenv(
+    cors_allow_origins: list[str] = _parse_cors_origins(
+        os.getenv(
             "CORS_ALLOW_ORIGINS",
             "http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173",
-        ).split(",")
-        if origin.strip()
-    ]
-    cors_allow_origin_regex: str = os.getenv("CORS_ALLOW_ORIGIN_REGEX", "")
+        )
+    )
+    cors_allow_origin_regex: str = _normalize_origin(os.getenv("CORS_ALLOW_ORIGIN_REGEX", ""))
+
+    if app_env.lower() == "production" and not cors_allow_origin_regex:
+        cors_allow_origin_regex = r"^https://.*\.onrender\.com$"
 
 
 settings = Settings()
