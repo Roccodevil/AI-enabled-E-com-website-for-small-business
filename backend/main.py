@@ -32,11 +32,13 @@ media_dir = Path(__file__).resolve().parent / "media"
 media_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/media", StaticFiles(directory=str(media_dir)), name="media")
 
+allow_all_origins = len(settings.cors_allow_origins) == 1 and settings.cors_allow_origins[0] == "*"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_allow_origins,
     allow_origin_regex=settings.cors_allow_origin_regex or None,
-    allow_credentials=True,
+    allow_credentials=not allow_all_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

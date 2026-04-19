@@ -32,6 +32,9 @@ def _normalize_origin(origin: str) -> str:
 
 
 def _parse_cors_origins(raw: str) -> list[str]:
+    if raw.strip() == "*":
+        return ["*"]
+
     origins: list[str] = []
     for part in raw.split(","):
         normalized = _normalize_origin(part)
