@@ -81,8 +81,9 @@ class Settings:
         )
     )
     cors_allow_origin_regex: str = _normalize_origin(os.getenv("CORS_ALLOW_ORIGIN_REGEX", ""))
+    is_render: bool = os.getenv("RENDER", "").lower() == "true" or bool(os.getenv("RENDER_SERVICE_ID"))
 
-    if app_env.lower() == "production" and not cors_allow_origin_regex:
+    if (app_env.lower() == "production" or is_render) and not cors_allow_origin_regex:
         cors_allow_origin_regex = r"^https://.*\.onrender\.com$"
 
 
