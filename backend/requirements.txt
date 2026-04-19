@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+scikit-learn
+pandas
+xgboost
+pydantic
+python-jose[cryptography]
+passlib>=1.7.4
+python-multipart
+chromadb
+joblib
+python-dotenv
+PyJWT[crypto]
+pinecone
+groq
