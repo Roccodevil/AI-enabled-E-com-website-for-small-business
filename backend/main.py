@@ -10,6 +10,7 @@ from api.analyst import router as analyst_router
 from api.feedback import router as feedback_router
 from api.orders import router as orders_router
 from api.products import router as products_router
+from core.config import settings
 from db import models  # noqa: F401
 from db.base import Base
 from db.session import engine
@@ -33,7 +34,8 @@ app.mount("/media", StaticFiles(directory=str(media_dir)), name="media")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080", "http://127.0.0.1:8080", "http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_origins=settings.cors_allow_origins,
+    allow_origin_regex=settings.cors_allow_origin_regex or None,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
